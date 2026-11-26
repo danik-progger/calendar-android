@@ -1,0 +1,83 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/calendar_widget_background"
+    android:orientation="horizontal"
+    android:padding="@dimen/widget_inset">
+
+    <LinearLayout
+        android:id="@+id/widget_month_panel"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:importantForAccessibility="yes"
+        android:layout_weight="46"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="19dp"
+            android:layout_marginBottom="2dp"
+            android:orientation="horizontal">
+
+            <!-- Start at the center of the first day column, then offset to the text edge. -->
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:importantForAccessibility="no" />
+
+            <TextView
+                android:id="@+id/widget_month_title"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="13"
+                android:ellipsize="end"
+                android:fontFamily="@font/mulish"
+                android:gravity="center_vertical"
+                android:includeFontPadding="false"
+                android:importantForAccessibility="no"
+                android:maxLines="1"
+                android:text="@string/calendar_widget_name"
+                android:textColor="@color/widget_calendar_text"
+                android:textFontWeight="600"
+                android:textSize="12sp"
+                android:translationX="-5dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/widget_weeks"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:importantForAccessibility="noHideDescendants"
+            android:orientation="vertical" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/widget_agenda"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="17dp"
+        android:layout_weight="54"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/widget_empty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:fontFamily="@font/mulish"
+            android:includeFontPadding="false"
+            android:textColor="@color/widget_calendar_muted"
+            android:textFontWeight="500"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/widget_agenda_events"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </LinearLayout>
+</LinearLayout>

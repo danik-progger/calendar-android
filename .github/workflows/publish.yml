@@ -1,0 +1,87 @@
+name: Publish Android download
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-android
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Build release APK
+        run: |
+          sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
+          ./gradlew --no-daemon :app:assembleRelease "-PcalendarVersionCode=$((GITHUB_RUN_NUMBER + 1))"
+      - name: Sign and verify APK
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          : "${ANDROID_KEYSTORE_BASE64:?Set the release keystore secret}"
+          : "${ANDROID_KEYSTORE_PASSWORD:?Set the release keystore password}"
+          : "${ANDROID_KEY_ALIAS:?Set the release key alias}"
+          : "${ANDROID_KEY_PASSWORD:?Set the release key password}"
+          keystore=$(mktemp)
+          trap 'rm -f "$keystore"' EXIT
+          printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$keystore"
+          tools="$ANDROID_HOME/build-tools/36.0.0"
+          "$tools/zipalign" -P 16 -f 4 app/build/outputs/apk/release/app-release-unsigned.apk "$RUNNER_TEMP/aligned.apk"
+          "$tools/apksigner" sign --ks "$keystore" --ks-key-alias "$ANDROID_KEY_ALIAS" \
+            --ks-pass env:ANDROID_KEYSTORE_PASSWORD --key-pass env:ANDROID_KEY_PASSWORD \
+            --out "$RUNNER_TEMP/Calendar-Android.apk" "$RUNNER_TEMP/aligned.apk"
+          "$tools/apksigner" verify "$RUNNER_TEMP/Calendar-Android.apk"
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+      - name: Install publisher
+        run: npm install --prefix "$RUNNER_TEMP" --no-save --no-package-lock --ignore-scripts @vercel/blob@2.9.0
+      - name: Publish APK and update Android link
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
+        run: |
+          head=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/main" --jq .object.sha)
+          if [[ "$head" != "$GITHUB_SHA" ]]; then
+            echo "::notice::A newer commit is on main. Keeping the current download."
+            exit 0
+          fi
+          cd "$RUNNER_TEMP"
+          node --input-type=module <<'JS'
+          import { openAsBlob } from 'node:fs';
+          import { put } from '@vercel/blob';
+
+          const version = `${process.env.GITHUB_RUN_ID}-${process.env.GITHUB_RUN_ATTEMPT}`;
+          const file = 'Calendar-Android.apk';
+          const apk = await put(`calendar/android/${version}/${file}`, await openAsBlob(file), {
+            access: 'public',
+            addRandomSuffix: false,
+          });
+          await put('calendar/latest/android.json', JSON.stringify({ android: apk.downloadUrl }), {
+            access: 'public',
+            addRandomSuffix: false,
+            allowOverwrite: true,
+            cacheControlMaxAge: 60,
+            contentType: 'application/json',
+          });
+          JS

@@ -1,0 +1,58 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_event_row"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/widget_event_day"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/widget_agenda_day_height"
+        android:layout_marginBottom="@dimen/widget_agenda_event_gap"
+        android:ellipsize="end"
+        android:fontFamily="@font/mulish"
+        android:gravity="center_vertical"
+        android:includeFontPadding="false"
+        android:maxLines="1"
+        android:textColor="@color/widget_calendar_text"
+        android:textSize="11sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:id="@+id/widget_event_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/calendar_widget_event_card"
+        android:orientation="vertical"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="@dimen/widget_agenda_card_inset">
+
+        <TextView
+            android:id="@+id/widget_event_title"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/widget_agenda_title_height"
+            android:ellipsize="end"
+            android:fontFamily="@font/mulish"
+            android:gravity="center_vertical"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:textColor="@color/widget_calendar_text"
+            android:textFontWeight="600"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/widget_event_time"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/widget_agenda_time_height"
+            android:layout_marginTop="@dimen/widget_agenda_time_gap"
+            android:ellipsize="end"
+            android:fontFamily="@font/mulish"
+            android:gravity="center_vertical"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:textColor="@color/widget_calendar_muted"
+            android:textFontWeight="500"
+            android:textSize="10sp"
+            android:visibility="gone" />
+    </LinearLayout>
+</LinearLayout>

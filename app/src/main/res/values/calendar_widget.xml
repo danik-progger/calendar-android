@@ -1,0 +1,22 @@
+<resources>
+    <dimen name="widget_min_height">144dp</dimen>
+    <dimen name="widget_inset">12dp</dimen>
+    <dimen name="widget_agenda_day_height">13dp</dimen>
+    <dimen name="widget_agenda_title_height">14dp</dimen>
+    <dimen name="widget_agenda_time_height">12dp</dimen>
+    <dimen name="widget_agenda_card_inset">3dp</dimen>
+    <dimen name="widget_agenda_day_gap">6dp</dimen>
+    <dimen name="widget_agenda_event_gap">4dp</dimen>
+    <dimen name="widget_agenda_time_gap">1dp</dimen>
+    <string name="calendar_widget_name">Calendar</string>
+    <string name="calendar_widget_description">See this month and your upcoming events.</string>
+    <string name="calendar_widget_sync">Open Calendar to sync</string>
+    <string name="calendar_widget_empty">No upcoming events</string>
+    <string name="calendar_widget_pick_date">Choose a date. Today, %1$s</string>
+    <string name="calendar_widget_time_range">%1$s to %2$s</string>
+    <color name="widget_calendar_surface">#FFFFFF</color>
+    <color name="widget_calendar_text">#303744</color>
+    <color name="widget_calendar_muted">#626B7B</color>
+    <color name="widget_calendar_month_muted">#6E7685</color>
+    <color name="widget_calendar_today_text">#AD451B</color>
+</resources>
