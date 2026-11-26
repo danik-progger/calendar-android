@@ -18,6 +18,6 @@ GitHub Actions runs `./gradlew :app:lintDebug :app:compileDebugKotlin :app:compi
 
 The icon catalog and license are bundled in `assets/icons`, so this repository builds without sibling directories.
 
-The [publish workflow](.github/workflows/publish.yml) builds and signs the release APK on `main` and updates the landing page link. See [release setup](../shared/RELEASES.md).
+The [publish workflow](.github/workflows/publish.yml) builds and signs the release APK on `main`, saves it to private Vercel Blob, and updates the landing page link. Automatic releases skip until the Android signing secrets and `BLOB_READ_WRITE_TOKEN` are configured. See [release setup](../shared/RELEASES.md).
 
 Signed-in calendars update automatically through the server’s authenticated event stream. Create, edit, delete, and undo changes propagate across devices on the same account. Reconnect refreshes changes missed while offline. Mobile clients reconnect on foreground; background APNs/FCM notifications and offline writes are not implemented. Server setup requires the notification migration and direct database URL described in [shared backend setup](../shared/BACKEND.md).
